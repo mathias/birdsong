@@ -42,7 +42,7 @@ class Birdsong
 
   def discover_all_charts
     @chart_list = get_charts
-    @charts = @chart_list['weeklychartlist']['chart'] 
+    @charts = @chart_list['weeklychartlist']['chart']
     puts 'There are ' + @charts.count.to_s + ' pages of tracks'
   end
 
@@ -53,12 +53,14 @@ class Birdsong
   def write_json_for_method(method, from, to)
     api_method = "user.get#{method}"
     weekly_chart = get_for_time_period(api_method, from, to)
+    readable_from_date = Time.at(from.to_i).to_date.to_s
+    readable_to_date = Time.at(to.to_i).to_date.to_s
 
-    unless weekly_chart.has_key?(method) && weekly_chart[method].has_key?("#text")
+    unless weekly_chart.has_key?('error') || (weekly_chart.has_key?(method) && weekly_chart[method].has_key?("#text"))
       File.open(File.expand_path("../data/#{method}_#{from}_to_#{to}.json", __FILE__), 'w').write weekly_chart
-      puts "Wrote results for method #{method} from #{from} to #{to}"
+      puts "Wrote results for method #{method} from #{readable_from_date} to #{readable_to_date}"
     else
-      puts "No results for method #{method} from #{from} to #{to}" 
+      puts "No results for method #{method} from #{readable_from_date} to #{readable_to_date}"
     end
   end
 
